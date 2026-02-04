@@ -25,7 +25,7 @@ public class EventController {
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats(
-            @RequestParam String machineId,
+            @RequestParam(required = false) String machineId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime end) {
         return ResponseEntity.ok(eventService.getStats(machineId, start, end));
