@@ -23,9 +23,11 @@ Database: H2 (In-Memory) for zero-latency testing and easy reviewer setup.
 ORM: Spring Data JPA / Hibernate.
 
 📊 Performance Benchmark
+
 The system was tested using a batch of 1,000 events. By configuring hibernate.jdbc.batch_size=1000, the ingestion time was measured at approximately 350ms - 450ms, comfortably meeting the sub-1-second requirement.
 
 📖 API Usage
+
 1. Batch Ingest Events
 POST /events/batch
 
@@ -53,6 +55,7 @@ Healthy: Average defect rate < 2.0
 Warning: Average defect rate ≥ 2.0
 
 ⚙️ Setup & Execution
+
 Clone the Repo: git clone https://github.com/shambhavi-vaibhav/factory-event-processor.git
 
 Run Application: ./mvnw spring-boot:run
