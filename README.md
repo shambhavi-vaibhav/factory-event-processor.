@@ -24,7 +24,12 @@ ORM: Spring Data JPA / Hibernate.
 
 📊 Performance Benchmark
 
-The system was tested using a batch of 1,000 events. By configuring hibernate.jdbc.batch_size=1000, the ingestion time was measured at approximately 350ms - 450ms, comfortably meeting the sub-1-second requirement.
+Tested on MacBook Pro (Java 17, 16GB RAM)
+
+- **Batch Size:** 1,000 events
+- **Total Ingestion Time:** 0.737s
+- **Throughput:** ~1,350 events/sec
+- **Average Latency:** < 1ms per event
 
 📖 API Usage
 
