@@ -66,7 +66,16 @@ public class EventService {
     }
 
     public Map<String, Object> getStats(String machineId, ZonedDateTime start, ZonedDateTime end) {
-        List<Event> events = eventRepository.findByMachineIdAndEventTimeBetween(machineId, start, end);
+        List<Event> events;
+
+        if (machineId == null) {
+            events = eventRepository.findAll().stream()
+                    .filter(e -> !e.getEventTime().isBefore(start)
+                            && !e.getEventTime().isAfter(end))
+                    .toList();
+        } else {
+            events = eventRepository.findByMachineIdAndEventTimeBetween(machineId, start, end);
+        }
 
         // Filter out -1 for defect calculations [cite: 47, 77]
         long totalDefects = events.stream()
@@ -81,7 +90,7 @@ public class EventService {
         String status = (avgDefectRate < 2.0) ? "Healthy" : "Warning"; // [cite: 81-83]
 
         return Map.of(
-                "machineId", machineId,
+                "machineId", machineId == null ? "ALL" : machineId,
                 "eventsCount", events.size(),
                 "defectsCount", totalDefects,
                 "avgDefectRate", Math.round(avgDefectRate * 100.0) / 100.0,
