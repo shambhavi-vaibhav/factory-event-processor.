@@ -1,74 +1,80 @@
-Factory Machine Event Processor:
+# Factory Machine Event Processor
 
-A high-performance Spring Boot REST API built to handle real-time event data from factory machines. This service is optimized for high-throughput ingestion, data integrity, and automated health monitoring.
+A high-performance Spring Boot REST API designed to process real-time event data from factory machines. The service focuses on high-throughput batch ingestion, data validation, deduplication, updates, and machine health analytics.
 
-🚀 Key Features
-High-Speed Ingestion: Processes batches of 1,000+ events in under 1 second using JDBC batching.
+## 🚀 Live Deployment
 
-Smart Deduplication: Implemented logic to ignore identical duplicate payloads while allowing valid updates for existing event IDs.
+**Live API:** https://factory-event-processor.onrender.com
 
-Data Validation: * Rejects events with timestamps more than 15 minutes into the future.
+The application is deployed on **Render** using Docker.
 
-Ensures duration values are positive.
+### API Endpoints
 
-Machine Analytics: Real-time /stats endpoint providing average defect rates and health status (Healthy/Warning).
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/events/batch` | Ingest and process a batch of machine events |
+| GET | `/events/stats` | Calculate machine/event statistics and health status |
 
-🛠 Tech Stack
-Language: Java 17
+---
 
-Framework: Spring Boot 4.0.2
+## 🚀 Key Features
 
-Database: H2 (In-Memory) for zero-latency testing and easy reviewer setup.
+### High-Speed Batch Ingestion
+Processes large batches of machine events using Hibernate JDBC batching to improve database write performance.
 
-ORM: Spring Data JPA / Hibernate.
+### Smart Deduplication
+- Ignores identical duplicate events with the same `eventId` and payload.
+- Allows valid updates when an existing event ID contains changed event data.
 
-📊 Performance Benchmark
+### Data Validation
+- Rejects events with timestamps more than 15 minutes in the future.
+- Rejects events with invalid duration values.
+- Returns structured rejection reasons for invalid events.
 
-Tested on MacBook Pro (Java 17, 16GB RAM)
+### Machine Analytics
+The `/events/stats` endpoint calculates:
+
+- Total events
+- Total defects
+- Average defect rate
+- Machine health status
+
+Health status is determined using the defect-rate threshold:
+
+- `Healthy` → average defect rate < 2.0
+- `Warning` → average defect rate >= 2.0
+
+---
+
+## 🛠 Tech Stack
+
+- **Language:** Java 17
+- **Framework:** Spring Boot 3.2.2
+- **Database:** H2 (In-Memory)
+- **ORM:** Spring Data JPA / Hibernate
+- **Build Tool:** Maven
+- **Deployment:** Docker + Render
+
+---
+
+## 📊 Performance Benchmark
+
+Tested locally with a batch of 1,000 events.
 
 - **Batch Size:** 1,000 events
-- **Total Ingestion Time:** 0.737s
+- **Ingestion Time:** ~0.737 seconds
 - **Throughput:** ~1,350 events/sec
-- **Average Latency:** < 1ms per event
+- **Processing:** JDBC batching
 
-📖 API Usage
+> Benchmark results depend on hardware, JVM configuration, database configuration, and workload.
 
-1. Batch Ingest Events
-POST /events/batch
+---
 
-JSON
+## 📖 API Usage
 
-[
-  
-  {
-    
-    "eventId": "EVT-001",
-    "machineId": "MAC-10",
-    "eventTime": "2026-02-04T22:30:00Z",
-    "durationMs": 1500,
-    "defectCount": 0
-  
-  }
+### 1. Batch Ingest Events
 
-]
+**POST**
 
-2. Machine Statistics
-GET /events/stats
-
-Healthy: Average defect rate < 2.0
-
-Warning: Average defect rate ≥ 2.0
-
-⚙️ Setup & Execution
-
-Clone the Repo: git clone https://github.com/shambhavi-vaibhav/factory-event-processor.git
-
-Run Application: ./mvnw spring-boot:run
-
-H2 Console: Available at http://localhost:8080/h2-console
-
-JDBC URL: jdbc:h2:mem:factorydb
-
-Username: sa
-
-Password: password
+```text
+/events/batch
